@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -70,9 +71,10 @@ func collectScheduleJson() []ScheduleItem {
 func main() {
 	var portFlag = flag.Int("p", 8080, "port on which to serve http")
 	flag.Parse()
-	fmt.Printf("%+v\n", collectScheduleJson())
 	var port = fmt.Sprintf(":%v", strconv.Itoa(*portFlag))
-
+	ScheduleMap := collectScheduleJson()
+	fmt.Printf("%v\n", time.Time(ScheduleMap[0].StartDate).Format("2006-01-02 15:04"))
+	fmt.Printf("%v\n", time.Time(ScheduleMap[0].EndDate).Format("2006-01-02 15:04"))
 	log.Println("server started on port", port)
 	http.HandleFunc("/schedule.ics", handleScheduleRequest)
 	log.Fatal(http.ListenAndServe(port, nil))
