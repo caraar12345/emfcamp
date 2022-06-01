@@ -1,3 +1,7 @@
 babbling-clock.emf.adhd.energy {
   reverse_proxy http://babbling-clock:8080
 }
+
+schedule.emf.adhd.energy {
+  reverse_proxy http://schedule-to-ics:8080
+}

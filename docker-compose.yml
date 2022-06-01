@@ -14,6 +14,10 @@ services:
     image: mendhak/http-https-echo:24
     container_name: babbling-clock
     hostname: babbling-clock
-  schedule-ics:
+  schedule-to-ics:
     build:
-      context: ./schedule-to-ics
+      context: /home/opc/emfcamp/schedule-to-ics
+      dockerfile: /home/opc/emfcamp/schedule-to-ics/Dockerfile
+    container_name: schedule-to-ics
+    hostname: schedule-to-ics
+    env_file: /home/opc/emfcamp/schedule-to-ics/.env
