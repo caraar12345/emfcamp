@@ -74,22 +74,24 @@ func assembleIcalFile(scheduleMap []ScheduleItem) string {
 		}
 
 		event := cal.AddEvent(fmt.Sprintf("%v@favourites.emf.adhd.energy", strconv.Itoa(scheduleItem.ID)))
-		event.SetSummary(scheduleItem.Title)
 
-		var beingRecorded string
+		var newSummary string
 		if scheduleItem.MayRecord {
-			beingRecorded = "Talk will be recorded"
+			newSummary = fmt.Sprintf("📹 %v", scheduleItem.Title)
 		} else {
-			beingRecorded = "Talk will not be recorded"
+			newSummary = scheduleItem.Title
 		}
 
-		var contentNote string
-		if scheduleItem.ContentNote == "" {
-			contentNote = "No content note provided"
-		} else {
-			contentNote = scheduleItem.ContentNote
-		}
-		event.SetDescription(fmt.Sprintf("%v\n%v\n%v\n", contentNote, scheduleItem.Description, beingRecorded))
+		event.SetSummary(newSummary)
+
+		//var contentNote string
+		//if scheduleItem.ContentNote == "" {
+		//	contentNote = "No content note provided"
+		//} else {
+		//	contentNote = scheduleItem.ContentNote
+		//}
+		//event.SetDescription(fmt.Sprintf("%v\n%v\n%v\n", contentNote, scheduleItem.Description, beingRecorded))
+
 		event.SetURL(scheduleItem.Link)
 
 		if len(scheduleItem.Latlon) != 0 {
