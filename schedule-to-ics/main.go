@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"time"
 
+	ics "github.com/arran4/golang-ical"
 	"github.com/joho/godotenv"
 )
 
@@ -68,13 +69,55 @@ func collectScheduleJson() []ScheduleItem {
 	return schedule
 }
 
+func assembleIcalFile(scheduleMap []ScheduleItem) string {
+	cal := ics.NewCalendar()
+	for _, scheduleItem := range scheduleMap {
+		if !scheduleItem.IsFave {
+			continue
+		}
+
+		event := cal.AddEvent(fmt.Sprintf("%v@favourites.emf.adhd.energy", strconv.Itoa(scheduleItem.ID)))
+		event.SetSummary(scheduleItem.Title)
+
+		var beingRecorded string
+		if scheduleItem.MayRecord {
+			beingRecorded = "Talk will be recorded"
+		} else {
+			beingRecorded = "Talk will not be recorded"
+		}
+
+		var contentNote string
+		if scheduleItem.ContentNote == "" {
+			contentNote = "No content note provided"
+		} else {
+			contentNote = scheduleItem.ContentNote
+		}
+		event.SetDescription(fmt.Sprintf("%v\n%v\n%v\n", contentNote, scheduleItem.Description, beingRecorded))
+		event.SetURL(scheduleItem.Link)
+
+		if len(scheduleItem.Latlon) != 0 {
+			lat := fmt.Sprintf("%f", scheduleItem.Latlon[0])
+			lon := fmt.Sprintf("%f", scheduleItem.Latlon[1])
+			event.SetLocation(fmt.Sprintf("%v, %v", lat, lon))
+		}
+
+		event.SetStartAt(time.Time(scheduleItem.StartDate))
+		event.SetEndAt(time.Time(scheduleItem.EndDate))
+		if scheduleItem.Pronouns == "" {
+			scheduleItem.Pronouns = "no pronouns provided"
+		}
+
+		event.SetOrganizer(fmt.Sprintf("%v (%v)", scheduleItem.Speaker, scheduleItem.Pronouns))
+	}
+
+	return cal.Serialize()
+}
+
 func main() {
 	var portFlag = flag.Int("p", 8080, "port on which to serve http")
 	flag.Parse()
 	var port = fmt.Sprintf(":%v", strconv.Itoa(*portFlag))
-	ScheduleMap := collectScheduleJson()
-	fmt.Printf("%v\n", time.Time(ScheduleMap[0].StartDate).Format("2006-01-02 15:04"))
-	fmt.Printf("%v\n", time.Time(ScheduleMap[0].EndDate).Format("2006-01-02 15:04"))
+
 	log.Println("server started on port", port)
 	http.HandleFunc("/schedule.ics", handleScheduleRequest)
 	log.Fatal(http.ListenAndServe(port, nil))
