@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,13 +30,11 @@ func envVar(key string) string {
 }
 
 func handleScheduleRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("headers: %v\n", r.Header)
+	scheduleMap := collectScheduleJson()
+	icsString := assembleIcalFile(scheduleMap)
 
-	_, err := io.Copy(os.Stdout, r.Body)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	w.Header().Add("Content-Type", "text/calendar; charset=utf-8")
+	w.Write([]byte(icsString))
 }
 
 func collectScheduleJson() []ScheduleItem {
