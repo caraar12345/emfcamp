@@ -1,0 +1,3 @@
+babbling-clock.emf.adhd.energy {
+  reverse_proxy http://babbling-clock:8080
+}
