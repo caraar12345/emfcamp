@@ -91,7 +91,7 @@ func assembleIcalFile(scheduleMap []ScheduleItem) string {
 		//	contentNote = scheduleItem.ContentNote
 		//}
 		//event.SetDescription(fmt.Sprintf("%v\n%v\n%v\n", contentNote, scheduleItem.Description, beingRecorded))
-
+    event.SetDescription(fmt.Sprintf("%v\nURL: %v", scheduleItem.Venue, scheduleItem.Link))
 		event.SetURL(scheduleItem.Link)
 
 		if len(scheduleItem.Latlon) != 0 {
@@ -100,8 +100,8 @@ func assembleIcalFile(scheduleMap []ScheduleItem) string {
 			event.SetLocation(fmt.Sprintf("%v, %v", lat, lon))
 		}
 
-		event.SetStartAt(time.Time(scheduleItem.StartDate))
-		event.SetEndAt(time.Time(scheduleItem.EndDate))
+		event.SetStartAt(time.Time(scheduleItem.StartDate).Add(-time.Hour))
+		event.SetEndAt(time.Time(scheduleItem.EndDate).Add(-time.Hour))
 		if scheduleItem.Pronouns == "" {
 			scheduleItem.Pronouns = "no pronouns provided"
 		}
