@@ -91,7 +91,7 @@ func assembleIcalFile(scheduleMap []ScheduleItem) string {
 		//	contentNote = scheduleItem.ContentNote
 		//}
 		//event.SetDescription(fmt.Sprintf("%v\n%v\n%v\n", contentNote, scheduleItem.Description, beingRecorded))
-    event.SetDescription(fmt.Sprintf("%v\nURL: %v", scheduleItem.Venue, scheduleItem.Link))
+    event.SetDescription(fmt.Sprintf("%v\n\nURL: %v", scheduleItem.Venue, scheduleItem.Link))
 		event.SetURL(scheduleItem.Link)
 
 		if len(scheduleItem.Latlon) != 0 {
